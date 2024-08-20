@@ -1,0 +1,113 @@
+---
+title: "regression_analysis_guide_git"
+author: "Caitlin Marsh"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+#Guide for non-linear regression plots
+
+#Make sure you've created an ecp file for this, which is exactly the same as the ec file: Pull the final avg values from the original data collection excel files and rename samples to axis1, axis2, axis3, etc. 
+
+```{r}
+
+#TEMPLATE for explanation. This will intentionally not work when ran
+#Load in required packages for code commands
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(growthcurver)
+
+#Define data frame, pull from the ecp excel file made after growth curve
+
+df<-read_excel("Directory to ecp excel file")
+
+#Define the "line of best fit" function. Summarizes growth (finds best fit) through the data frames relation to time and relation to specific axes (samples)
+
+model.axis1 <- SummarizeGrowth(df$time, df$axis1)
+model.axis2 <- SummarizeGrowth(df$time, df$axis2)
+model.axis3 <- SummarizeGrowth(df$time, df$axis3)
+model.axis4 <- SummarizeGrowth(df$time, df$axis4)
+model.axis5 <- SummarizeGrowth(df$time, df$axis5)
+model.axis6 <- SummarizeGrowth(df$time, df$axis6)
+
+#Creates function for plotting later
+
+f <- function(modelname, t){
+  k <- modelname$vals$k
+  n0 <- modelname$vals$n0
+  r <- modelname$vals$r
+  k/(1 + ((k - n0)/n0) * exp(-r * t))
+}
+
+#First is the plotting of points...
+
+ggplot(df) + 
+  geom_point(aes(x = time, y = axis1, color = "blue1")) +
+  geom_point(aes(x = time, y = axis2, color = "skyblue")) +
+  geom_point(aes(x = time, y = axis3, color = "yellowgreen")) +
+  geom_point(aes(x = time, y = axis4, color = "green3")) +
+  geom_point(aes(x = time, y = axis5, color = "tan2")) +
+  geom_point(aes(x = time, y = axis6, color = "firebrick4")) +
+  scale_color_manual(name=NULL,
+		values=c("blue1", "skyblue", "yellowgreen", "green3", "tan2", "firebrick4"),
+		labels=c("sample1 name", "sample2 name", "sample3 name", "sample4 name", "sample5 name", "sample6 name"))+
+	labs(title="OD600 Growth",
+		x="Time",
+		y="OD600") +
+#Then the plotting of the lines!
+  stat_function(fun = f,color = "blue1",args = list(modelname=model.axis1)) +
+  stat_function(fun = f,color = "skyblue",args = list(modelname=model.axis2)) +
+  stat_function(fun = f,color = "yellowgreen",args = list(modelname=model.axis3)) +
+  stat_function(fun = f,color = "green3",args = list(modelname=model.axis4)) +
+  stat_function(fun = f,color = "tan2",args = list(modelname=model.axis5)) +
+  stat_function(fun = f,color = "firebrick4",args = list(modelname=model.axis6)) 
+
+#Paste the plot in the console to the report and you are good to go!
+
+```
+
+#Here is a working example:
+```{r}
+library(dplyr)
+library(ggplot2)
+library(readxl)
+library(growthcurver)
+
+df<-read_excel("/Users/kittymarsh/062623TESTecp.xlsx")
+
+model.axis1 <- SummarizeGrowth(df$time, df$axis1)
+model.axis2 <- SummarizeGrowth(df$time, df$axis2)
+model.axis3 <- SummarizeGrowth(df$time, df$axis3)
+model.axis4 <- SummarizeGrowth(df$time, df$axis4)
+model.axis5 <- SummarizeGrowth(df$time, df$axis5)
+model.axis6 <- SummarizeGrowth(df$time, df$axis6)
+
+
+f <- function(modelname, t){
+  k <- modelname$vals$k
+  n0 <- modelname$vals$n0
+  r <- modelname$vals$r
+  k/(1 + ((k - n0)/n0) * exp(-r * t))
+}
+
+ggplot(df) + 
+  geom_point(aes(x = time, y = axis1, color = "dodgerblue")) +
+  geom_point(aes(x = time, y = axis2, color = "dodgerblue4")) +
+  geom_point(aes(x = time, y = axis3, color = "green")) +
+  geom_point(aes(x = time, y = axis4, color = "green4")) +
+  geom_point(aes(x = time, y = axis5, color = "red2")) +
+  geom_point(aes(x = time, y = axis6, color = "red4")) +
+  scale_color_manual(name=NULL,
+		values=c("dodgerblue", "dodgerblue4", "green", "green4", "red2", "red4"),
+		labels=c("aS2341", "bS2341", "aS2347", "bS2347", "aS2348", "bS2348"))+
+	labs(title="OD600 Growth",
+		x="time(hr)",
+		y="OD600") +
+  stat_function(fun = f,color = "dodgerblue",args = list(modelname=model.axis1)) +
+  stat_function(fun = f,color = "dodgerblue4",args = list(modelname=model.axis2)) +
+  stat_function(fun = f,color = "green",args = list(modelname=model.axis3)) +
+  stat_function(fun = f,color = "green4",args = list(modelname=model.axis4)) +
+  stat_function(fun = f,color = "red2",args = list(modelname=model.axis5)) +
+  stat_function(fun = f,color = "red4",args = list(modelname=model.axis6))
+```
