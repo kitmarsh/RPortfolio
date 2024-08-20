@@ -1,0 +1,69 @@
+---
+title: "research_analysis_git"
+author: "Caitlin Marsh"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+#Guide for visualization and analysis of lab data through boxplots. Sensitive terminology has been replaced with "lab" or redacted altogeher
+
+#If photo of table is desired, go to the settings gear in the banner underneath tabs, and change to "Chunk Output Inline"
+
+#To name chunks, go to the settings gear at the top right of the chunk
+
+```{r}
+#TEMPLATE for explanation. This will intentionally not work when ran
+#Load in required packages for code commands
+library(tidyverse)
+library(readxl)
+
+#Define data frames, pull from the excel file made after growth curve
+labdata <- read_excel("Directory to lab excel file")
+labbox<- read_excel("Directory to lab excel file")
+
+#Redefine labbox to pull data and reformat it to a longform data frame, compressing the amount of samples from the original data frame down to two. This labels the lots as "YE" and the values as "Length"
+labbox <- labbox %>%
+  gather(key = "YE", value="Length")
+
+#Create graph with boxplots
+ggplot(labbox,aes(x = YE, y = Length, color=YE))+geom_boxplot(notch=TRUE)+geom_jitter(width = 0.1)+
+  scale_color_manual(name=NULL,
+                     values=c("blue", "mediumblue", "royalblue", "steelblue", "red", "darkgreen"),
+                     breaks=c("11591", "11592", "11593", "11594", "NC", "PC"),
+                     labels=c("11591", "11592", "11593", "11594", "NC", "PC"))+
+  theme_classic()
+
+#Summarize statistics for the samples. note, Numerals used as column headings need to have ""s
+
+#The "2" in the following line of code applies the summary across all columns, vs if there was a "1", the summary would be applied to every row
+
+lab_summary <- as.data.frame(apply(labdata,2,summary))
+lab_summary
+
+#Save output to csv file
+write.csv(lab_summary,"Directory to file output and file name", row.names = TRUE)
+
+```
+
+```{r}
+library(tidyverse)
+library(readxl)
+
+labdata <- read_excel("/Users/kittymarsh/LAB_441E.xlsx")
+labbox<- read_excel("/Users/kittymarsh/LAB_441E.xlsx")
+labbox <- labbox %>%
+  gather(key = "YE", value="Length")
+ggplot(labbox,aes(x = YE, y = Length, color=YE))+geom_boxplot(notch=FALSE)+geom_jitter(width = 0.1)+
+  scale_color_manual(name=NULL,
+                     values=c("red", "darkred", "darkgreen", "green", "blue", "darkblue"),
+                     breaks=c("nc_10", "nc_2", "pc_10", "pc_2", "fni441E_2", "fni441E_10"),
+                     labels=c("nc_10", "nc_2", "pc_10", "pc_2", "fni441E_2", "fni441E_10"))+
+  theme_classic()
+
+lab_summary <- as.data.frame(apply(labdata,2,summary))
+lab_summary
+
+write.csv(lab_summary,"/Users/kittymarsh/lab_summary1.csv", row.names = TRUE)
+
+```
+
