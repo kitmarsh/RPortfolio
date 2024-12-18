@@ -1,16 +1,16 @@
 ---
-title: "St. Thomas AASHE STARS DATA"
-subtitle: "Waste Managenement, Minimization and Diversion Data"
+title: "University of St. Thomas' Waste Minimization and Diversion: A Comparative Analysis of our Catholic Benchmark Institutions"
+subtitle: "AASHE Stars Waste Managenement, Minimization and Diversion Data"
 format: pdf
 editor: visual
-author: "Devon, Kitty, Jon, Max"
+author: "Devon Cac, Kitty Marsh, Jon Roux, Max Klein"
 ---
 
 **Introduction**
 
-Our group decided to do data exploration on Waste Management, Minimization, and Diversion with the AASHE data set. We wanted to explore Waste Management because of St. Thomas’ commitment to maximizing their sustainability efforts. The Office of Sustainability Initiatives asked us to focus on a set number of data sets, and Waste Minimization and Diversion is quite impactful on the environment depending on management. Variables such as material composted and recycled were included within our data set, which are valuable for addressing Waste Management, Minimization and Diversion. We wanted to see St. Thomas’ total waste breakdown.
+This project was created for the Office of Sustainability Initiatives at the University of St. Thomas, as a partnership with the DASC 130 class. Our group decided to explore the 2024 Waste Management, Minimization, and Diversion data set from the AASHE Stars website. We wanted to explore waste management because of St. Thomas' commitment to maximizing their sustainability efforts. The Office of Sustainability Initiatives asked us to focus on a select few data sets from AASHE's website, and we chose Waste Minimization and Diversion because it is quite impactful on the environment depending on management. Variables such as material composted and recycled were included within our data set, which are valuable for addressing Waste Management, Minimization and Diversion. We wanted to see St. Thomas' total waste breakdown.
 
-With our sustainability goals, we were curious to fully explore how we do compared to other Catholic Institutions. Currently, we are comparing the schools' 2024 year to their “Baseline” years, which are different for each school. Baseline year is the earliest data that an institution provided, and since they are not consistent, we removed it from our analysis. Further context, the baseline year for St. Thomas is 2018.
+With our sustainability goals, we were curious to fully explore how we do compared to other Catholic Institutions. Currently, we are comparing the schools' data submited for 2024 to their “Baseline” years, which are different for each school. Baseline year is the earliest data that an institution provided, and since they are not consistent, we removed it from our analysis. Further context, the baseline year for St. Thomas is 2018.
 
 In our goals of sharing the visualizations, we want to create a set of slides that can be used by St. Thomas' Sustainability office and displayed on the TV's around St. Thomas. We want to make sure our visualizations are easily understood without guidance from other students, bring awareness to the sustainability efforts being made by St. Thomas, and that our overall initiatives are successful and having an impact compared to other institutions.
 
