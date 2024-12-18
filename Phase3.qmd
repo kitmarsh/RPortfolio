@@ -1,0 +1,380 @@
+---
+title: "St. Thomas AASHE STARS DATA"
+subtitle: "Waste Managenement, Minimization and Diversion Data"
+format: pdf
+editor: visual
+author: "Devon, Kitty, Jon, Max"
+---
+
+**Introduction**
+
+Our group decided to do data exploration on Waste Management, Minimization, and Diversion with the AASHE data set. We wanted to explore Waste Management because of St. Thomas’ commitment to maximizing their sustainability efforts. The Office of Sustainability Initiatives asked us to focus on a set number of data sets, and Waste Minimization and Diversion is quite impactful on the environment depending on management. Variables such as material composted and recycled were included within our data set, which are valuable for addressing Waste Management, Minimization and Diversion. We wanted to see St. Thomas’ total waste breakdown.
+
+With our sustainability goals, we were curious to fully explore how we do compared to other Catholic Institutions. Currently, we are comparing the schools' 2024 year to their “Baseline” years, which are different for each school. Baseline year is the earliest data that an institution provided, and since they are not consistent, we removed it from our analysis. Further context, the baseline year for St. Thomas is 2018.
+
+In our goals of sharing the visualizations, we want to create a set of slides that can be used by St. Thomas' Sustainability office and displayed on the TV's around St. Thomas. We want to make sure our visualizations are easily understood without guidance from other students, bring awareness to the sustainability efforts being made by St. Thomas, and that our overall initiatives are successful and having an impact compared to other institutions.
+
+**Data Collection and Sourcing**
+
+Our group decided to compare data on Waste Minimization and Diversion between St. Thomas and other Catholic benchmark institutions. The other Catholic benchmark institutions were Creighton, Gonzaga, Loyola Chicago, Loyola Marymount, Santa Clara, Seattle, Dayton, Notre Dame, San Diego, and Villanova. The AASHE data set did not have data on Gonzaga, so we opted to remove that school from our overall analysis, leaving us with n = 9.
+
+The other data utilized was created through the AASHE stars benchmarking tool to create a reproducible excel sheet to join into our original data set. The steps for retrieving this second data set are through the AASHE stars website. From the “Reports & Data” tab, there is a “Benchmarking Tool” tab. When selected, it will bring you to a benchmarking tool menu to create the new benchmark. Once you have selected the new benchmark option; you can enter desired schools by clicking the top left icon (graduation cap). A menu then opens, where you can search for school names. After a school name has been searched, click on the "check mark" next to the institution’s name and begin searching for the next school. After all institutions have been selected, click the “OK” button on the top. After selecting schools, the lower right menu (3 bars) will allow you to select data points. We selected “Operations” as the category, “Waste” as the subcategory, and “Waste Minimization and Diversion” as the credit.
+
+**DO NOT SELECT THE CHECK NEXT TO THE RIGHT OF “OPERATIONS” OR “WASTE”. ONLY SELECT THE CHECK BOX TO THE RIGHT OF “WASTE MINIMIZATION AND DIVERSION**.”
+
+The scores that show up from the benchmarking tool is out of 100%, but on the participant report, it will be out of 8 points. Keep this in mind. There is a download data button on the top right (Cloud Icon). Make sure to keep the file path or put it in the same folder as your QMD file.
+
+**Data Cleaning**
+
+Before we begin working in the QMD file, make sure you have these packages and libraries installed/loaded: `library(readxl, ggplot2, tibble, tidyr, dplyer, readr, skimr)` .
+
+The first step we took is importing the data sets. We picked “stars-benchmark” from the benchmarking tool to import score data and, as provided by our instructor, “OP_18_Waste_Minimization_And_Diversion” for our general waste data. We began to filter the data set to the Catholic Benchmark Institutions that were listed earlier (minus Gonzaga as there was no data from that institution). After filtering each institution, we began to rename variables that we wanted to use in our analysis.
+
+**List of variables and renames:**
+
+`mats_comp` = "Materials composted, performance year"
+
+`mats_donor` = "Materials donated or re-sold, performance year"
+
+`mats_landfill` = "Materials disposed in a solid waste landfill or incinerator, performance year"
+
+`tot_waste` = "Total waste generated, performance year"
+
+`WCU` = "Weighted campus users, performance year"
+
+`tot_waste_per` = "Total waste generated per weighted campus user, performance year"
+
+`perc_change` = "Percentage reduction in total waste generated per weighted campus user from baseline"
+
+After renaming, we then selected the variables we used (all renamed variables, institution name, and date). We primarily used performance year over the baseline year. The baseline year is different for each institution while the performance is more recent. In the code, we actively selected our variables of interest and mutated them to be numeric. After we mutated our variables to be numeric, we created a new column to find the final percent change in each institution for total waste generated per weighted campus user, which plays a role in the score that the school received. We took the time to create a formula for final percent change because schools were set to 0 percent if their change was negative. To have complete data, we created a column called `fperc_change` to make sure our data set was complete.
+
+**Formula**
+
+(`fperc_change = ((tot_waste_per - Total waste generated per weighted campus user, baseline year)/Total waste generated per weighted campus user, baseline year)\*100`)
+
+After we created that column, we left joined our “OP_18_Waste_Minimization_And_Diversion” data frame with the final “stars-benchmark” data frame by `Institution` = `Institution (or Group)` . It took the values of `Institution (or Group)`, `Link, Rating Level, Submission Date, Version, and Waste Minimization and Diversion (%)` and joined it into our “OP_18_Waste_Minimization_And_Diversion” data frame.
+
+**Visualizations**
+
+Finally, we began our visualizations. Here is our step-by-step process in our QMD. For our visualizations we decided to remove LMU for visual information purposes. As recommended in terms of communicating visually, we actually lose information by including Loyola Marymount University, but for our summary statistics to continue good statistical practice we kept LMU. Further down, with each visual, you will find context and an interpretation for each visual.
+
+```{r}
+# Reading,cleaning,filtering data form original data set.
+
+library(readxl)
+library(dplyr)
+library(readr)
+library(tibble)
+library(ggplot2)
+library(tidyr)
+library(skimr)
+OP_18_Waste_Minimization_and_Diversion <- read_excel(
+"C:/Users/jonny_r6d17jw/Downloads/OP-18_Waste_Minimization_and_Diversion.xlsx")         
+
+ratings <- read_csv(
+"C:/Users/jonny_r6d17jw/OneDrive/Documents/DASC 130/stars-benchmark.csv")
+
+waste <- as.tibble(OP_18_Waste_Minimization_and_Diversion)
+
+
+
+ w2 <- waste |>
+  filter(Institution == "University of St. Thomas" | 
+           Institution == "Creighton University" | 
+           Institution == "Loyola University Chicago" | 
+           Institution == "Santa Clara University" | 
+           Institution == "Seattle University" | 
+           Institution == "University of Dayton" | 
+           Institution == "University of Notre Dame" | 
+           Institution == "University of San Diego" | 
+           Institution == "Villanova University")
+
+
+w3 <- w2 |> rename("mats_rec" ="Materials recycled, performance year", 
+             
+"mats_comp" = "Materials composted, performance year",
+             
+"mats_donor" = "Materials donated or re-sold, performance year", 
+             
+"mats_landfill" =
+"Materials disposed in a solid waste landfill or incinerator, performance year", 
+             
+"tot_waste" = "Total waste generated, performance year", 
+             
+"WCU" = "Weighted campus users, performance year", 
+             
+"tot_waste_per" 
+= "Total waste generated per weighted campus user, performance year", 
+             
+"perc_change"
+= "Percentage reduction in total waste generated per weighted campus user from baseline")
+
+
+             
+            
+```
+
+```{r}
+# Selecting Columns for use and creating new column 
+#showing Percentage change (+/-) in total waste generated 
+#per weighted campus user from baseline year
+
+w5 <- w3 |> select("Institution","Last Updated","mats_rec","mats_comp","mats_donor",
+"mats_landfill","tot_waste",
+"WCU","tot_waste_per",
+"Total waste generated per weighted campus user, baseline year")
+
+
+w6 <- w5 |> mutate_at((c("mats_rec","mats_comp",
+                         
+  "mats_donor","mats_landfill","tot_waste",
+  "WCU",
+  "tot_waste_per",
+  "Total waste generated per weighted campus user, baseline year")), as.numeric)
+
+w7 <- w6 |> mutate(fperc_change = ((tot_waste_per- 
+`Total waste generated per weighted campus user, baseline year`)/
+`Total waste generated per weighted campus user, baseline year`)*100)
+
+w7
+
+```
+
+```{r}
+# Left joining tables for ratings and scores.
+
+ratings$`Institution (or Group)`[1] <- "University of San Diego"
+
+ratings
+
+w8 <- left_join(w7,ratings,by = 
+c("Institution" = "Institution (or Group)"))
+
+w8
+```
+
+```{r}
+# Graph 1
+
+ggplot(w8,aes(x = Institution, y = tot_waste,fill = `Rating Level`)) +
+  geom_col() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+  plot.title= element_text( hjust = 0.5)) + 
+  
+  labs(y = "Total Waste(tons)", 
+  title = "Total Waste by Catholic Institution") + 
+  scale_fill_manual(values = c("Gold" = 'gold',
+  "Silver" = "#C0C0C0" )) +
+  theme(panel.background =
+        element_rect(fill = 'snow1'),
+        panel.grid.major = element_line(color = 'lavenderblush4',size = 0.5),
+        panel.grid.minor = element_line(color = 'lavenderblush4', size = 0.5))
+```
+
+A bar chart comparing Total Waste by Institution and applying their `Rating Level`. We can see that Notre Dame University has the leading amount of total waste out of the rest of the Catholic Benchmark Institutions, while the University of St. Thomas has the least (a very slight lead over Creighton). The graph indicates that St. Thomas is producing the least amount of total waste with 838 tons.
+
+```{r}
+# Graph 2
+
+ggplot(w8,aes(x = mats_landfill, y = tot_waste)) + 
+geom_point(aes(color = Institution)) +
+geom_smooth(method = lm,se = FALSE,color = 'black')+
+labs(x = "Materials Sent to Landfill or Incinerator(tons)",
+y = "Total Waste(tons)", 
+title = "Total Waste vs Materials Sent to Landfills or Incinerator") +
+labs(plot.title= element_text( hjust = 0.5))
+```
+
+A scatter plot with the Total Waste vs Materials Sent to Landfills or Incinerators with `Institutions` as a color for each point. Notre Dame has almost twice the number of materials sent to landfills or incinerators, likely resulting from the large enrollment, however it still follows the general trend of the data. St. Thomas' total waste as referenced was 838 tons and we are sending 358 tons to landfills and incinerators. This means that out of all of the waste St. Thomas produces, about 43% of it goes to landfills and incinerators.
+
+```{r}
+# Graph 3
+
+ggplot(w8,aes(x = Institution, y = fperc_change,fill = `Rating Level`
+              )) + 
+  geom_col() + theme(axis.text.x = element_text(angle = 45,
+  vjust = 1, 
+  hjust=1),
+  plot.title= element_text( hjust = 0.3,vjust = 3,size=10),
+  legend.title=element_text(size=6),
+  axis.text=element_text(size=7)) +
+labs(y = "Percent",
+title = "Percent change in Waste Per Person From Baseline Year") +
+  scale_fill_manual(values = 
+  c("Gold" = 'gold', "Silver" = "#C0C0C0" )) + 
+  theme(panel.background = element_rect(fill = 'snow1'),
+        panel.grid.major = element_line(color = 'lavenderblush4', size = 0.5),
+        panel.grid.minor = element_line(color = 'lavenderblush4', size = 0.5))
+```
+
+A bar chart of the final Percent Change in Waste Per person From Baseline Year. We used color to showcase the `Rating Level`. The values that go below 0 on the graph display a negative percentage, which is a good thing. This means that there is a reduction in waste per person. The bars where the values are positive, displayed an increase in waste per person from baseline year (%). As we can see, St. Thomas has a negative percentage, meaning that we’ve improved compared to our baseline year compared to other schools. The interesting thing we found is that only 2 Silver rating institutions also had an improvement in waste per person reduction. 
+
+```{r}
+# Graph 4
+library(RColorBrewer)
+ggplot(w8,aes(x = WCU, y = tot_waste)) +
+  geom_point(aes(color = Institution),size = 3) +
+  geom_smooth(method = lm,se = FALSE,color = 'black')+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1),
+        plot.title= element_text( hjust = 0.3)) + 
+  labs(y = "Total Waste",x = "Campus Pop",
+  title = "Total Waste by Campus Pop") +
+  theme(panel.background = element_rect(fill = 'snow1'),
+        panel.grid.major = element_line(color = 'lavenderblush4', size = 0.5),
+        panel.grid.minor = element_line(color = 'lavenderblush4', size = 0.5)) +                    scale_color_discrete(breaks=c('Creighton University',
+'Loyola University Chicago',
+'Santa Clara University',
+'Seattle University',
+'University of Dayton',
+'University of Notre Dame',
+'University of San Diego',
+'University of St. Thomas',
+'Villanova University'
+)) +
+scale_color_brewer(palette = "Paired")
+
+
+
+          
+
+  
+
+```
+
+A scatter plot of the Total Waste by Campus Population with the institutions for colors on each point. This makes the University of Notre Dame, with the largest population, the highest waste producer. The outcome of this graph is as expected: There is a positive association between population and total waste production. Because St. Thomas is below the fit line, this means they are performing under the predicted value for an institution of its size.
+
+```{r}
+# Graph 5
+
+w8l <- pivot_longer(w8,cols = 3:4,names_to = "sust",values_to = "vals")
+
+#w8l
+
+
+ggplot(w8l,aes(x = sust,y = vals,fill = sust)) + 
+  geom_col() + 
+  theme(panel.background = element_rect(fill = 'snow1'),
+        panel.grid.major = element_line(color = 'lavenderblush4', size = 0.5),
+        panel.grid.minor = element_line(color = 'lavenderblush4', size = 0.5)
+          ) + 
+  scale_color_brewer(palette = "Paired") +
+  theme(plot.title= element_text( hjust = 0.3),
+  axis.text.x = element_blank(),
+  axis.ticks.x = element_blank(),strip.text.x = element_text(size = 5),
+  panel.grid.major.x  = element_blank()) +
+  facet_wrap(~Institution,nrow = 4)+
+  labs(y = "Waste (tons)",x = "Sustainability Option", 
+  title = "Amount of Waste Diversion through Sustainable Methods",
+  fill = "Sustainable Method")+
+  
+  scale_fill_hue(labels = c("Materials Composted","Materials Recycled"))
+```
+
+A faceted bar chart of Amount of Waste Diversion through Sustainable Methods. It has how many tons were allocated towards composting vs recycling. This chart gives us a nice visual on how much waste is disposed of through sustainable methods, but also which method is used more often. In general, recycling appears to be the more popular option between the two with all but one school having more waste recycled than composted: Santa Clara University being the school with more composting. Creighton and San Diego appear to have missing data for materials composted. About 448 tons of St. Thomas' waste is diverted to recycling and composting combined which is 53% of total waste.
+
+## Summary Statistics
+
+Replicating the statements from beginning to recreate the tibble with LMU included for the summary statistics.
+
+```{r}
+#Using my_skim and skim_with to show only relavent summary statistics
+w20 <- waste |>
+  filter(Institution == "University of St. Thomas" | 
+           Institution == "Creighton University" | 
+           Institution == "Loyola University Chicago" | 
+           Institution == "Santa Clara University" | 
+           Institution == "Seattle University" | 
+           Institution == "University of Dayton" | 
+           Institution == "University of Notre Dame" | 
+           Institution == "University of San Diego" | 
+           Institution == "Villanova University"|
+           Institution == "Loyola Marymount University")
+
+w20
+
+
+w30 <- w20 |> rename("mats_rec" ="Materials recycled, performance year", 
+             
+"mats_comp" = "Materials composted, performance year",
+             
+"mats_donor" = "Materials donated or re-sold, performance year", 
+             
+"mats_landfill" =
+"Materials disposed in a solid waste landfill or incinerator, performance year", 
+             
+"tot_waste" = "Total waste generated, performance year", 
+             
+"WCU" = "Weighted campus users, performance year", 
+             
+"tot_waste_per" 
+= "Total waste generated per weighted campus user, performance year", 
+             
+"perc_change"
+= "Percentage reduction in total waste generated per weighted campus user from baseline")
+
+
+w50 <- w30 |> select("Institution","Last Updated","mats_rec","mats_comp","mats_donor",
+"mats_landfill","tot_waste",
+"WCU","tot_waste_per",
+"Total waste generated per weighted campus user, baseline year")
+
+
+w60 <- w50 |> mutate_at((c("mats_rec","mats_comp",
+                         
+  "mats_donor","mats_landfill","tot_waste",
+  "WCU",
+  "tot_waste_per",
+  "Total waste generated per weighted campus user, baseline year")), as.numeric)
+
+w70 <- w60 |> mutate(fperc_change = ((tot_waste_per- 
+`Total waste generated per weighted campus user, baseline year`)/
+`Total waste generated per weighted campus user, baseline year`)*100)
+
+w80 <- left_join(w70,ratings,by = 
+c("Institution" = "Institution (or Group)"))
+
+
+my_skim <- skim_with(numeric = sfl(mean,sd), append = FALSE)
+my_skim(w80)
+
+```
+
+**Mean value for `tot_waste` (total waste)** - the average amount of total waste for every school is 2990.36 tons.
+
+**Standard Deviation for `WCU` (weighted campus users for performance year)** - the average distance from the mean (9568) is +/- 3004.31 weighted users
+
+**Standard Deviation for `tot_waste_per` (Total waste generated per weighted campus user, performance year)** - the average distance from the mean (.31) is +/- .335 tons/weighted campus users, we found this SD interesting because of it's value being larger than the mean primarily due to Loyola Marymount University having a `tot_waste_per value` of 1.24, which was significantly higher than the next highest value of .36 from Notre Dame. When the SD was calculated after taking this value out (1.24 for `tot_waste_per`), the SD became much lower dropping from .335 to .087. This showed that Loyola Marymount University was an outlier for this value and it seems that this college had very high values elsewhere in the data as well. We initially thought it could have been a typing error when the data was being entered.
+
+```{r}
+
+my_skim(w80[,9])
+
+my_skim(w80[-2,9])
+
+w80[,c(1,9)]
+
+
+```
+
+**Standard Deviation for `fperc_change` (Percentage change(+/-) in total waste generated per weighted campus user from baseline year)** - the average distance from the mean (11.44) was 100.11 percentage points change of total waste generated from the baseline year. This was another instance where the value for Loyola Marymount (286.43) was much higher than the next highest value (-.56 (a reduction in total waste by 56%)) and the SD dropped drastically from 100.11 to 27.82.
+
+```{r}
+
+my_skim(w80[,11])
+
+my_skim(w80[-2,11])
+
+w80[,c(1,11)]
+```
+
+**Mean for `mats_rec` (materials recycled for the performance year)** - the average materials recycled was 664.2 tons and upon further analysis Loyola Marymount was again much higher than the next highest (2319 vs 839) and calculating the mean after taking out their value dropped it from 664.2 to 480.3.
+
+```{r}
+
+my_skim(w80[,3])
+
+my_skim(w80[-2,3])
+
+w80[,c(1,3)]
+
+```
